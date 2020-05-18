@@ -42,9 +42,14 @@ commands:
   wasm_pack_install:
     description: "Installs `wasm-pack`"
     steps:
+      # We need to install a custom build of wasm-pack as it doesn't pass through parameters to cargo correctly:
+      # <https://github.com/rustwasm/wasm-pack/pull/851>
+      # - run:
+      #     name: "Install wasm-pack"
+      #     command: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       - run:
           name: "Install wasm-pack"
-          command: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          command: cargo install --git https://github.com/azriel91/wasm-pack.git --branch bugfix/698/build-tests-with-passthrough-args --force
       - run:
           name: "Print wasm-pack version"
           command: "wasm-pack --version"
