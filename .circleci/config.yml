@@ -1,4 +1,6 @@
 version: "2.1"
+orbs:
+  browser-tools: circleci/browser-tools@1.0.0
 
 executors: {
   "beta": {
@@ -37,6 +39,24 @@ commands:
       - run:
           name: Test
           command: cargo test --verbose --all
+  wasm_pack_install:
+    description: "Installs `wasm-pack`"
+    steps:
+      - run:
+          name: "Install wasm-pack"
+          command: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - run:
+          name: "Print wasm-pack version"
+          command: "wasm-pack --version"
+  wasm_pack_test:
+    description: "Runs WASM Tests"
+    parameters:
+      browser:
+        type: string
+    steps:
+      - run:
+          name: "Test With Browser (<< parameters.browser >>)"
+          command: wasm-pack test --headless --<< parameters.browser >> -- --no-default-features --features "std wasm-bindgen"
 
 jobs:
   test:
@@ -51,6 +71,23 @@ jobs:
     steps:
       - checkout
       - cargo_test
+
+  wasm_test:
+    parameters:
+      version:
+        type: executor
+      version_name:
+        type: string
+      browser:
+        type: string
+    executor: << parameters.version >>
+    environment:
+      CI_RUST_VERSION: << parameters.version_name >>
+    steps:
+      - browser-tools/install-browser-tools
+      - checkout
+      - wasm_pack_install
+      - wasm_pack_test: { browser: << parameters.browser >> }
 
   rustfmt:
     parameters:
@@ -142,6 +179,40 @@ workflows:
           name: test-nightly
           version: nightly
           version_name: nightly
+          filters: {
+  "branches": {
+    "ignore": [
+      "/.*\\.tmp/"
+    ]
+  },
+  "tags": {
+    "only": [
+      "/^v\\d+\\.\\d+\\.\\d+.*$/"
+    ]
+  }
+}
+      - wasm_test:
+          name: wasm_test-chrome
+          version: stable
+          version_name: stable
+          browser: chrome
+          filters: {
+  "branches": {
+    "ignore": [
+      "/.*\\.tmp/"
+    ]
+  },
+  "tags": {
+    "only": [
+      "/^v\\d+\\.\\d+\\.\\d+.*$/"
+    ]
+  }
+}
+      - wasm_test:
+          name: wasm_test-firefox
+          version: stable
+          version_name: stable
+          browser: firefox
           filters: {
   "branches": {
     "ignore": [
