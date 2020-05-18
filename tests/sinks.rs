@@ -25,27 +25,41 @@ tests! {
         for _ in 0..10 {
             wait!(sink.send(())).unwrap();
         }
+
+        let elapsed = i.elapsed();
         assert!(
-            i.elapsed() <= Duration::from_millis(100),
-            "elapsed: {:?}",
-            i.elapsed()
+            elapsed <= Duration::from_millis(100),
+            "expected elapsed <= Duration::from_millis(100), elapsed: {:?}",
+            elapsed
         );
 
         wait!(sink.send(())).unwrap();
+
+        let elapsed = i.elapsed();
         assert!(
-            i.elapsed() > Duration::from_millis(100),
-            "elapsed: {:?}",
-            i.elapsed()
+            elapsed >= Duration::from_millis(100),
+            "expected elapsed >= Duration::from_millis(100), elapsed: {:?}",
+            elapsed
         );
         assert!(
-            i.elapsed() <= Duration::from_millis(200),
-            "elapsed: {:?}",
-            i.elapsed()
+            elapsed <= Duration::from_millis(200),
+            "expected elapsed <= Duration::from_millis(200), elapsed: {:?}",
+            elapsed
         );
 
         wait!(sink.send(())).unwrap();
-        assert!(i.elapsed() > Duration::from_millis(200), "elapsed: {:?}", i.elapsed());
-        assert!(i.elapsed() <= Duration::from_millis(300), "elapsed: {:?}", i.elapsed());
+
+        let elapsed = i.elapsed();
+        assert!(
+            elapsed >= Duration::from_millis(200),
+            "expected elapsed >= Duration::from_millis(200), elapsed: {:?}",
+            elapsed
+        );
+        assert!(
+            elapsed <= Duration::from_millis(300),
+            "expected elapsed <= Duration::from_millis(300), elapsed: {:?}",
+            elapsed
+        );
 
         let result = sink.into_inner();
         assert_eq!(result.len(), 12);

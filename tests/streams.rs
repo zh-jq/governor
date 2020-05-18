@@ -25,14 +25,39 @@ tests! {
         for _ in 0..10 {
             wait!(stream.next());
         }
-        assert!(i.elapsed() <= Duration::from_millis(100));
+        let elapsed = i.elapsed();
+        assert!(
+            elapsed <= Duration::from_millis(100),
+            "expected elapsed <= Duration::from_millis(100), elapsed: {:?}",
+            elapsed
+        );
 
         wait!(stream.next());
-        assert!(i.elapsed() > Duration::from_millis(100));
-        assert!(i.elapsed() <= Duration::from_millis(200));
+
+        let elapsed = i.elapsed();
+        assert!(
+            elapsed >= Duration::from_millis(100),
+            "expected elapsed >= Duration::from_millis(100), elapsed: {:?}",
+            elapsed
+        );
+        assert!(
+            elapsed <= Duration::from_millis(200),
+            "expected elapsed <= Duration::from_millis(200), elapsed: {:?}",
+            elapsed
+        );
 
         wait!(stream.next());
-        assert!(i.elapsed() > Duration::from_millis(200));
-        assert!(i.elapsed() <= Duration::from_millis(300));
+
+        let elapsed = i.elapsed();
+        assert!(
+            elapsed >= Duration::from_millis(200),
+            "expected elapsed >= Duration::from_millis(200), elapsed: {:?}",
+            elapsed
+        );
+        assert!(
+            elapsed <= Duration::from_millis(300),
+            "expected elapsed <= Duration::from_millis(300), elapsed: {:?}",
+            elapsed
+        );
     }
 }
