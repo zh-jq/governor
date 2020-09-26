@@ -4,6 +4,16 @@
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+* Support for the `wasm32-unknown-unknown` target. Default features have to be
+  disabled so that native dependencies are not built, and `Jitter` is not
+  available.
+
+### Contributors
+
+* [@azriel91](https://github.com/azriel91)
+
 ## [[0.3.1](https://docs.rs/governor/0.3.1/governor/)] - 2020-07-26
 
 ### Added

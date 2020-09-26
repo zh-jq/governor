@@ -15,6 +15,9 @@ keywords = ["rate-limiting", "rate-limit", "no_std", "gcra"]
 # We use criterion, don't infer benchmark files.
 autobenches = false
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [package.metadata.template_ci.bench]
 run = true
 version = "nightly"
@@ -44,18 +47,22 @@ name = "governor_criterion_benches"
 harness = false
 
 [dev-dependencies]
+crossbeam = "0.7.3"
+more-asserts = "0.2.1"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.3.2"
 tynm = "0.1.4"
-crossbeam = "0.7.3"
 libc = "0.2.70"
 futures = "0.3.5"
 proptest = "0.10.0"
-more-asserts = "0.2.1"
 
 [features]
 default = ["std", "dashmap", "jitter", "quanta"]
 std = ["no-std-compat/std", "nonzero_ext/std", "futures-timer", "futures"]
 jitter = ["rand"]
+stdweb = ["instant/stdweb"]
+wasm-bindgen = ["futures-timer/wasm-bindgen", "instant/wasm-bindgen"]
 no_std = []
 
 [dependencies]
@@ -63,7 +70,11 @@ nonzero_ext = { version = "0.2.0", default-features = false }
 parking_lot = "0.11.0"
 futures-timer = { version = "3.0.2", optional = true }
 futures = { version = "0.3.5", optional = true }
+instant = "0.1.7"
 rand = { version = "0.7.3", optional = true }
 dashmap = { version = "3.11.1", optional = true }
 quanta = { version = "0.4.1", optional = true }
 no-std-compat = { version = "0.4.0", features = [ "alloc", "compat_hash" ] }
+
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+wasm-bindgen-test = "0.3.12"
