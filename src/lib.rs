@@ -34,7 +34,7 @@
 // Unfortunately necessary, otherwise features aren't supported in doctests:
 #![allow(clippy::needless_doctest_main)]
 
-#![cfg(feature = "no_std")]
+#[cfg(feature = "no_std")]
 extern crate no_std_compat as std;
 
 pub mod r#_guide;
